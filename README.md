@@ -27,12 +27,14 @@ notification-service/
 
 ## 🚀 How to Run This Project
 
-### 1. Clone the Repository
+1. Clone the Repository
 
 git clone https://github.com/your-username/notification-service.git
 cd notification-service
+
 2. Install Dependencies
 npm install
+
 3. Configure Environment Variables
 Create a .env file in the root folder:
 
@@ -40,8 +42,10 @@ Create a .env file in the root folder:
 MONGO_URI=your_mongodb_connection_string
 PORT=3000
 
+
 4. Start the Server
 node server.js
+
 
 Once done you’ll see:
 Server running on http://localhost:3000
