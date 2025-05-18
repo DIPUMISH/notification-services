@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notification Service</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-xl mx-auto bg-white shadow-md rounded p-6">
+    <h1 class="text-2xl font-bold mb-4">📣 Send a Notification</h1>
+
+    <form id="notifyForm" class="space-y-4">
+      <input type="text" id="userId" placeholder="User ID" required class="w-full border p-2 rounded"/>
+      
+      <select id="type" class="w-full border p-2 rounded">
+        <option value="email">Email</option>
+        <option value="sms">SMS</option>
+        <option value="in_app">In-App</option>
+      </select>
+      
+      <textarea id="content" placeholder="Notification content" required class="w-full border p-2 rounded"></textarea>
+      
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Send Notification</button>
+    </form>
+
+    <hr class="my-6"/>
+
+    <h2 class="text-xl font-semibold mb-2">📄 Get Notifications</h2>
+    <input type="text" id="getUserId" placeholder="Enter User ID" class="w-full border p-2 rounded mb-2"/>
+    <button onclick="fetchNotifications()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mb-4">Fetch</button>
+
+    <div id="results" class="text-sm text-gray-700"></div>
+  </div>
+
+  <script>
+    document.getElementById('notifyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('userId').value;
+      const type = document.getElementById('type').value;
+      const content = document.getElementById('content').value;
+
+      const res = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, type, content })
+      });
+
+      const data = await res.json();
+      alert(data.error || 'Notification Sent!');
+    });
+
+    async function fetchNotifications() {
+      const userId = document.getElementById('getUserId').value;
+      const res = await fetch(`/api/users/${userId}/notifications`);
+      const data = await res.json();
+
+      const container = document.getElementById('results');
+      container.innerHTML = data.map(n =>
+        `<div class="border-b py-2">
+          <strong>${n.type.toUpperCase()}</strong>: ${n.content} <em class="text-gray-500">(${n.status})</em>
+        </div>`
+      ).join('');
+    }
+  </script>
+</body>
+</html>
