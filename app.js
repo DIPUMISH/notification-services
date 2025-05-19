@@ -1,30 +1,29 @@
+// app.js
 const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
 const path = require('path');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-dotenv.config();
+const app = express();
 
-const app = express(); // ✅ Define this BEFORE using app.*
-
+// Middleware
 app.use(express.json());
-
-// Serve frontend
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Connect to MongoDB
+// Connect MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('✅ Connected to MongoDB'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+  useUnifiedTopology: true
+}).then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Import routes
+// Routes
 const notificationRoutes = require('./routes/notifications');
-const userRoutes = require('./routes/users');
-
 app.use('/api/notifications', notificationRoutes);
+
+// User routes
+const userRoutes = require('./routes/users');
 app.use('/api/users', userRoutes);
 
 module.exports = app;

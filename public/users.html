@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registered Users</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="register.html">Register User</a>
+    <a href="users.html">View Users</a>
+  </nav>
+
+  <h1>All Registered Users</h1>
+  <ul id="userList"></ul>
+
+  <script>
+    async function fetchUsers() {
+      const res = await fetch('/api/users');
+      const users = await res.json();
+      const list = document.getElementById('userList');
+      list.innerHTML = '';
+
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <strong>${user.name}</strong> - ID: ${user._id}
+          <button onclick="deleteUser('${user._id}')">Delete</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    async function deleteUser(userId) {
+      if (!confirm("Are you sure you want to delete this user?")) return;
+      const res = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE'
+      });
+      const result = await res.json();
+      if (res.ok) {
+        alert(`✅ ${result.message}`);
+        fetchUsers();
+      } else {
+        alert(`❌ Error: ${result.error}`);
+      }
+    }
+
+    window.onload = fetchUsers;
+  </script>
+</body>
+</html>
